@@ -1,41 +1,27 @@
 ---
-# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-domain
 apiVersion: backstage.io/v1alpha1
-kind: System
+kind: Domain
 metadata:
-  name: examples
+  name: big-data
+  description: Big Data
 spec:
-  owner: guests
+  owner: xwing-libra
 ---
-# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-domain
 apiVersion: backstage.io/v1alpha1
-kind: Component
+kind: Domain
 metadata:
-  name: example-website
+  name: cex
+  description: Customer Experience
 spec:
-  type: website
-  lifecycle: experimental
-  owner: guests
-  system: examples
-  providesApis: [example-grpc-api]
+  owner: cex
 ---
-# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-domain
 apiVersion: backstage.io/v1alpha1
-kind: API
+kind: Domain
 metadata:
-  name: example-grpc-api
+  name: ml
+  description: Machine Learning
 spec:
-  type: grpc
-  lifecycle: experimental
-  owner: guests
-  system: examples
-  definition: |
-    syntax = "proto3";
-
-    service Exampler {
-      rpc Example (ExampleMessage) returns (ExampleMessage) {};
-    }
-
-    message ExampleMessage {
-      string example = 1;
-    };
+  owner: ml
