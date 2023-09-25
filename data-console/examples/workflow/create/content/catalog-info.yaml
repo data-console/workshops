@@ -1,0 +1,15 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name }}
+  description: ${{ values.description | dump }}
+  labels:
+    allegro.com/sc-id: "${{ values.scId }}"
+spec:
+  type: workflow
+  lifecycle: production
+  owner: ${{ values.owner }}
+  system: ${{ values.workspace }}
+  dependsOn:
+    - ${{ values.scheduler }}

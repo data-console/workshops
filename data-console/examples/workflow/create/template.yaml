@@ -2,36 +2,35 @@ apiVersion: scaffolder.backstage.io/v1beta3
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-template
 kind: Template
 metadata:
-  name: create-scheduler-template
-  title: Create New Scheduler Template
-  description: Template for new scheduler creation.
+  name: create-workflow-template
+  title: Create Workflow Template
+  description: Template for new workflow creation.
 spec:
   owner: xwing-libra
-  type: scheduler
+  type: workflow
 
   # These parameters are used to generate the input form in the frontend, and are
   # used to gather input data for the execution of the template.
   parameters:
-    - title: Provide Scheduler specification
+    - title: Provide Workflow specification
       required:
         - name
         - description
         - scId
         - owner
         - workspace
-        - cloudProject
-        - environments
+        - scheduler
       properties:
         name:
           title: Name
           type: string
-          description: Unique name of the scheduler
+          description: Unique name of the workflow
           ui:field: EntityNamePicker
           ui:autofocus: true
         description:
           title: Description
           type: string
-          description: Scheduler business purpose description
+          description: Workflow business purpose description
           ui:options:
             rows: 5
         scId:
@@ -54,25 +53,14 @@ spec:
           ui:options:
             catalogFilter:
               kind: System
-        cloudProject:
-          title: Cloud Project
+        scheduler:
+          title: Scheduler
           type: string
           ui:field: EntityPicker
           ui:options:
             catalogFilter:
               kind: Component
-              spec.type: cloud-project
-        environments:
-          title: Environments
-          type: array
-          items:
-            type: string
-            enum:
-              - prod
-              - test
-              - dev
-          uniqueItems: true
-          ui:widget: checkboxes
+              spec.type: scheduler
     - title: Choose a location
       required:
         - repoUrl
@@ -108,9 +96,8 @@ spec:
           description: ${{ parameters.description }}
           owner: ${{ parameters.owner }}
           workspace: ${{ parameters.workspace }}
-          environments: ${{ parameters.environments }}
           scId: ${{ parameters.scId }}
-          cloudProject: ${{ parameters.cloudProject }}
+          scheduler: ${{ parameters.scheduler }}
 
     # This step publishes the contents of the working directory to GitHub.
     - id: publish
@@ -119,10 +106,10 @@ spec:
       input:
         repoUrl: ${{ parameters.repoUrl }}
         branchName: cloud-project-${{ parameters.name }}
-        title: ":sparkles: Create scheduler ${{ parameters.name }}"
+        title: ":sparkles: Create workflow ${{ parameters.name }}"
         description: Create new workspace ${{ parameters.name }}
         targetPath: ${{ parameters.workspace | parseEntityRef | pick('name')  }}/${{ parameters.name }}
-        commintMessage: ":sparkles: Create scheduler ${{ parameters.name }}"
+        commintMessage: ":sparkles: Create workflow ${{ parameters.name }}"
         token: ${{ secrets.USER_OAUTH_TOKEN }}
 
     # The final step is to register our new component in the catalog.
