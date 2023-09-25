@@ -1,0 +1,25 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name }}
+  description: ${{ values.description | dump }}
+spec:
+  type: cloud-project
+  lifecycle: production
+  owner: ${{ values.owner }}
+  system: ${{ values.workspace }}
+  dependsOn:{% for env in values.environments %}
+    - resource:default/${{ values.name }}-${{ env }}{% endfor %}{% for env in values.environments %}
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: ${{ values.name }}-${{ env }}
+  description: "${{ values.description }} ${{ env }} environment"
+spec:
+  type: gcp-project
+  owner: ${{ values.owner }}
+  system: ${{ values.workspace }}
+  dependencyOf:
+    - component:default/${{ values.name }}{% endfor %}

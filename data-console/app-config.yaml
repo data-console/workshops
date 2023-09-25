@@ -30,6 +30,8 @@ backend:
   database:
     client: better-sqlite3
     connection: ':memory:'
+#    connection:
+#      directory: ./db
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
 
 integrations:
@@ -91,5 +93,9 @@ catalog:
     # Local example template
     - type: file
       target: ../../examples/workspace/template.yaml
+      rules:
+        - allow: [Template]
+    - type: file
+      target: ../../examples/cloud-project/template.yaml
       rules:
         - allow: [Template]
