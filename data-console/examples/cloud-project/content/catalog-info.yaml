@@ -4,6 +4,8 @@ kind: Component
 metadata:
   name: ${{ values.name }}
   description: ${{ values.description | dump }}
+  labels:
+    allegro.com/sc-id: "${{ values.scId }}"
 spec:
   type: cloud-project
   lifecycle: production
@@ -17,6 +19,8 @@ kind: Resource
 metadata:
   name: ${{ values.name }}-${{ env }}
   description: "${{ values.description }} ${{ env }} environment"
+  labels:
+    allegro.com/sc-id: "${{ values.scId }}"
 spec:
   type: gcp-project
   owner: ${{ values.owner }}

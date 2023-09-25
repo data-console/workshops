@@ -15,6 +15,7 @@ spec:
     - title: Provide Workspace specification
       required:
         - name
+        - description
         - owner
         - domain
       properties:
