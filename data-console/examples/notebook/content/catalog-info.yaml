@@ -1,0 +1,11 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: ${{ values.name }}
+spec:
+  type: gcp-vertex-ai-instance
+  owner: user:${{ values.user }}
+  system: ${{ values.workspace }}
+  dependsOn:
+    - ${{ values.gcpProject }}
