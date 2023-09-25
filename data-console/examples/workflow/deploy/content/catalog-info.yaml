@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: ${{ values.workflow | parseEntityRef | pick("name") }}-${{ values.composer | parseEntityRef | pick("name") }}
+  description: "${{ values.workflow }} deployment to ${{ values.composer }}"
+spec:
+  type: workflow-deployment
+  owner: ${{ values.owner }}
+  system: ${{ values.workspace }}
+  dependsOn:
+    - ${{ values.workflow }}
+    - ${{ values.composer }}

@@ -1,0 +1,120 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-template
+kind: Template
+metadata:
+  name: deploy-workflow-template
+  title: Deploy Workflow Template
+  description: Template for workflow deployment.
+spec:
+  owner: xwing-libra
+  type: workflow
+
+  # These parameters are used to generate the input form in the frontend, and are
+  # used to gather input data for the execution of the template.
+  parameters:
+    - title: Provide Workflow specification
+      required:
+        - workflow
+        - composer
+      properties:
+        workspace:
+          title: Workspace
+          type: string
+          description: Workspace context
+          ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              kind: System
+        workflow:
+          title: Workflow
+          type: string
+          description: Select workflow to deploy
+          ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              kind: Component
+              spec.type: Workflow
+        composer:
+          title: Composer
+          type: string
+          description: Select scheduler to deploy
+          ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              kind: Resource
+              spec.type: gcp-cloud-composer
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind: Group
+    - title: Choose a location
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+            allowedOrganizations:
+              - data-console
+            allowedOwners:
+              - data-console
+            allowedRepos:
+              - workshops-state
+            requestUserCredentials:
+              secretsKey: USER_OAUTH_TOKEN
+
+
+  # These steps are executed in the scaffolder backend, using data that we gathered
+  # via the parameters above.
+  steps:
+    # Each step executes an action, in this case one templates files into the working directory.
+
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
+      input:
+        url: ./content
+        values:
+          workflow: ${{ parameters.workflow }}
+          composer: ${{ parameters.composer }}
+          owner: ${{ parameters.owner }}
+          workspace: ${{ parameters.workspace }}
+
+    # This step publishes the contents of the working directory to GitHub.
+    - id: publish
+      name: Publish PR
+      action: publish:github:pull-request
+      input:
+        repoUrl: ${{ parameters.repoUrl }}
+        branchName: deploy-${{ parameters.workflow | parseEntityRef | pick('name') }}-${{ parameters.composer | parseEntityRef | pick('name') }}
+        title: ":sparkles: Deploy workflow ${{ parameters.workflow }} to ${{ parameters.composer }}"
+        description: Deploy workflow ${{ parameters.workflow }} to ${{ parameters.composer }}
+        targetPath: ${{ parameters.workspace | parseEntityRef | pick('name') }}/${{ parameters.workflow | parseEntityRef | pick('name') }}/${{ parameters.composer | parseEntityRef | pick('name') }}
+        commintMessage: ":sparkles: Deploy workflow ${{ parameters.workflow }} to ${{ parameters.composer }}"
+        token: ${{ secrets.USER_OAUTH_TOKEN }}
+
+    # The final step is to register our new component in the catalog.
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: https://github.com/data-console/workshops-state
+        catalogInfoPath: "/blob/main/${{ parameters.workspace | parseEntityRef | pick('name') }}/${{ parameters.workflow | parseEntityRef | pick('name') }}/${{ parameters.composer | parseEntityRef | pick('name') }}/catalog-info.yaml"
+        optional: true
+
+  # Outputs are displayed to the user after a successful execution of the template.
+  output:
+    links:
+      - title: PR
+        url: ${{ steps['publish'].output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps['register'].output.entityRef }}

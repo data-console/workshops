@@ -23,6 +23,7 @@ metadata:
   description: "${{ values.description }} ${{ env }} environment"
   labels:
     allegro.com/sc-id: "${{ values.scId }}"
+    allegro.com/environment: "${{ values.env }}"
 spec:
   type: gcp-project
   owner: ${{ values.owner }}

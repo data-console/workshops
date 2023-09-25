@@ -24,6 +24,7 @@ metadata:
   description: "${{ values.description }} ${{ env }} environment"
   labels:
     allegro.com/sc-id: "${{ values.scId }}"
+    allegro.com/environment: "${{ env }}"
 spec:
   type: gcp-cloud-composer
   owner: ${{ values.owner }}

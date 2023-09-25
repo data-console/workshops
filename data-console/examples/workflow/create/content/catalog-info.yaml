@@ -11,5 +11,6 @@ spec:
   lifecycle: production
   owner: ${{ values.owner }}
   system: ${{ values.workspace }}
+  scheduler: ${{ values.scheduler }}
   dependsOn:
     - ${{ values.scheduler }}

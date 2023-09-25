@@ -107,3 +107,7 @@ catalog:
       target: ../../examples/workflow/create/template.yaml
       rules:
         - allow: [Template]
+    - type: file
+      target: ../../examples/workflow/deploy/template.yaml
+      rules:
+        - allow: [Template]
