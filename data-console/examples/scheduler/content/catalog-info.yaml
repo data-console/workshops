@@ -5,15 +5,16 @@ metadata:
   name: ${{ values.name }}
   description: ${{ values.description | dump }}
   annotations:
-    allegro.com/resource-type: "gcp-project"
+    allegro.com/resource-type: "gcp-cloud-composer"
   labels:
     allegro.com/sc-id: "${{ values.scId }}"
 spec:
-  type: cloud-project
+  type: scheduler
   lifecycle: production
   owner: ${{ values.owner }}
   system: ${{ values.workspace }}
-  dependsOn:{% for env in values.environments %}
+  dependsOn:
+    - ${{ values.cloudProject }}{% for env in values.environments %}
     - resource:default/${{ values.name }}-${{ env }}{% endfor %}{% for env in values.environments %}
 ---
 apiVersion: backstage.io/v1alpha1
@@ -24,8 +25,10 @@ metadata:
   labels:
     allegro.com/sc-id: "${{ values.scId }}"
 spec:
-  type: gcp-project
+  type: gcp-cloud-composer
   owner: ${{ values.owner }}
   system: ${{ values.workspace }}
+  dependsOn:
+    - resource:${{ values.cloudProject | parseEntityRef | pick("name") }}-${{ env }}
   dependencyOf:
-    - component:default/${{ values.name }}{% endfor %}
+    - component:default/${{ values.name }}{% endfor %} }}

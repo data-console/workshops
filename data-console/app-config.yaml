@@ -99,3 +99,7 @@ catalog:
       target: ../../examples/cloud-project/template.yaml
       rules:
         - allow: [Template]
+    - type: file
+      target: ../../examples/scheduler/template.yaml
+      rules:
+        - allow: [Template]
